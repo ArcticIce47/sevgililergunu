@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Güzel Sevgilime</title>
+  <style>
+    :root {
+      --pink-500: #ec4899;
+      --pink-300: #f9a8d4;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fce7f3, #fdf2f8);
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(252, 231, 243, 0.8);
+    }
+    h1 {
+      color: var(--pink-500);
+      font-size: 2.5rem;
+    }
+    /* Counter styling */
+    #counter {
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      color: var(--pink-500);
+    }
+    /* Music toggle button styling */
+    #music-toggle {
+      margin-top: 1rem;
+      font-size: 1rem;
+      background: var(--pink-500);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    /* Timeline Container & Rows */
+    .timeline-container {
+      position: relative;
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .timeline-row {
+      position: relative;
+      margin-bottom: 8rem; /* Increased spacing between rows */
+    }
+    .timeline-row:last-child {
+      margin-bottom: 0;
+    }
+    .timeline-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--pink-300);
+      transform: translateY(-50%);
+    }
+    .timeline-events {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      padding: 1rem 0;
+    }
+    /* Reverse the order for alternate (snake) effect */
+    .timeline-row.reverse .timeline-events {
+      flex-direction: row-reverse;
+    }
+    .timeline-event {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--pink-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+    .timeline-event:hover {
+      transform: scale(1.1);
+      border-color: var(--pink-500);
+    }
+    .timeline-event.active {
+      background: #fce7f3;
+      border-color: var(--pink-500);
+    }
+    .timeline-event span {
+      color: var(--pink-500);
+      font-weight: bold;
+      text-align: center;
+      font-size: 0.9rem;
+      padding: 0 0.3rem;
+    }
+    /* Character styling – its position is set via JS */
+    #character {
+      width: 192px;
+      height: 192px;
+      background: url('Başlıksız-1.png') no-repeat center center;
+      background-size: cover;
+      position: absolute;
+      transition: all 0.5s ease;
+      z-index: 1;
+    }
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+    /* Modal Photo styled as a background image */
+    #modal-photo {
+      width: 100%;
+      height: 300px; /* Adjust as needed */
+      margin-top: 1rem;
+      border-radius: 0.5rem;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    /* Falling hearts animation */
+    .heart {
+      position: fixed;
+      top: 0; /* Hearts start at the top */
+      pointer-events: none;
+      animation: fall linear forwards;
+      color: var(--pink-500);
+      font-size: 1.5rem;
+    }
+    @keyframes fall {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+    /* Video container styling */
+    .video-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      text-align: center;
+    }
+    .video-container video {
+      width: 100%;
+      max-width: 900px;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    /* Hide the default audio controls if needed */
+    /* #background-music { display: none; } */
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sevgililer Günümüz Kutlu Olsun Aşkımmm</h1>
+    <div id="counter"></div>
+    <!-- Music Toggle Button -->
+    <button id="music-toggle">Yalın bi sus amk</button>
+  </header>
+
+  <div class="timeline-container">
+    <!-- Row 1: 4 events -->
+    <div class="timeline-row">
+      <div class="timeline-line"></div>
+      <div class="timeline-events">
+        <div class="timeline-event" data-event="meet">
+          <span>Tanışma</span>
+        </div>
+        <div class="timeline-event" data-event="date">
+          <span>İlk Buluşma</span>
+        </div>
+        <div class="timeline-event" data-event="trip">
+          <span>Gou</span>
+        </div>
+        <div class="timeline-event" data-event="moment">
+          <span>Sahil</span>
+        </div>
+      </div>
+    </div>
+    <!-- Row 2: 4 events (reversed for snake effect) -->
+    <div class="timeline-row reverse">
+      <div class="timeline-line"></div>
+      <div class="timeline-events">
+        <div class="timeline-event" data-event="dinner">
+          <span>İlk Havuçlu Kek</span>
+        </div>
+        <div class="timeline-event" data-event="trip2">
+          <span>İlk Bilardo</span>
+        </div>
+        <div class="timeline-event" data-event="hug">
+          <span>Love Actually</span>
+        </div>
+        <div class="timeline-event" data-event="kiss">
+          <span>Sevgili olma</span>
+        </div>
+      </div>
+    </div>
+    <!-- Row 3: 2 events, centered -->
+    <div class="timeline-row">
+      <div class="timeline-line"></div>
+      <div class="timeline-events" style="justify-content: space-around;">
+        <div class="timeline-event" data-event="home">
+          <span>Bakteri</span>
+        </div>
+        <div class="timeline-event" data-event="anniversary">
+          <span>Özel Teşekkür</span>
+        </div>
+      </div>
+    </div>
+    <div id="character"></div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h2 id="modal-title"></h2>
+      <p id="modal-description"></p>
+      <!-- Photo section using background-image -->
+      <div id="modal-photo"></div>
+    </div>
+  </div>
+  
+  <!-- Video Container -->
+  <div class="video-container">
+    <video controls>
+      <source src="video.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  
+  <!-- Background Music Audio Element -->
+  <audio id="background-music" loop autoplay>
+    <source src="yalin.mp4" type="audio/mp4" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    // Music Toggle Functionality
+    const bgMusic = document.getElementById("background-music");
+    const musicToggle = document.getElementById("music-toggle");
+
+    musicToggle.addEventListener("click", () => {
+      if (bgMusic.paused) {
+        bgMusic.play();
+        musicToggle.textContent = "Yalın bi sus amk";
+      } else {
+        bgMusic.pause();
+        musicToggle.textContent = "tamam amk devam et";
+      }
+    });
+
+    // Updated eventsData using image file names (update paths as needed)
+    const eventsData = {
+      meet: {
+        title: 'Tanışma',
+        description: 'İlk görüşte aşkı ilk defa deneyimlediğim için gerçek olup olmadığını anlamak için dışarı çıkıp tekrar girmiştim.',
+        photo: 'tanisma.jpg'
+      },
+      date: {
+        title: 'İlk Buluşma',
+        description: 'İyiki arabayla Starbucksa giderken "gelir misin?" diye sormuştun. Çok casual ama bence özel ve güzel bir buluşma olmuştu. Yürürken acayip heyecanlıydım; evden yokuşu zor çıkmıştım valla.',
+        photo: 'ilkbulusma.jpg'
+      },
+      trip: {
+        title: 'Gou',
+        description: 'Muhtemelen lavuk, herhalde yer-yön yetisi çok zayıf bir sihirbaz diye düşünmüştündür. Kolum ağrıyo diyip "kol atma" numarası...',
+        photo: 'gou.jpeg'
+      },
+      moment: {
+        title: 'Sahil',
+        description: 'Senin en sevdiğin date’lerden biri olduğunu biliyorum. Benim için de öyleydi. 29 Ekim olması, sahilde burger yeme işi, ikimiz de birbirimize iyice ısındı; hava da hafif üşüttü. Cidden çok güzeldi; foto da tam oturduğumuz yer.',
+        photo: 'sahil.jpg'
+      },
+      dinner: {
+        title: 'İlk Havuçlu Kek',
+        description: 'Bunu anlatmama gerek yok; aklımız çıkmıştı ilk yediğimizde. Bugün bilardo + havuçlu kek yapmıştık, efsanenin başlangıcıydı. Bi de bugün aşırı gülmüştük. Very special.',
+        photo: 'ilkhauvclukek.jpg'
+      },
+      trip2: {
+        title: 'İlk Bilardo',
+        description: 'Çok önemli bir rekabetin başlangıcı... İlk topa vurduğunda "aha sıçtık, ilk defa oynamıyor galiba" demiştim. Seride öne geçtiğin için biraz canım sıkkın ama çok keyif aldığımı değiştirmiyor.',
+        photo: 'ilkbilardo.jpg'
+      },
+      hug: {
+        title: 'Love Actually',
+        description: 'Bu günün bu kadar hoşuma gittiğini biliyor musun? Zar zor gitmiştik, yağmur vardı, eve zor dönmüştük falan; ama yediğimiz pizza, izlediğimiz film... Genel olarak havası çok hoşuma gitmişti. Bilerek bu fotoğrafı koydum, "nereye bakıyorsun be, sinek mi gördün?"',
+        photo: 'loveactually.jpg'
+      },
+      kiss: {
+        title: 'Sevgili Olma',
+        description: 'Önceki gece Boop’ta, sonrasında Snap’ten yazdıklarından tahmin ediyordum ama ertesi gün olacağını hiç beklemiyordum. Çıkma teklifi de etmiştim, very formal.',
+        photo: 'sevgiliolma.jpg'
+      },
+      home: {
+        title: 'Bakteri',
+        description: 'Benim en sevdiğim günlerimizden biri herhalde. Aşırı seviyom bu günü. Eve dönerken bomboş sokakta griddy yapıyordum, zıplıyordum falan; sürekli gülüyordum. Çok seviyom bu günü.',
+        photo: 'bakteri.jpg'
+      },
+      anniversary: {
+        title: 'Özel Teşekkür',
+        description: 'Bu arkadaşı unutamazdım herhalde. Üstümüzde büyük emeği var; sevgilerimi ve saygılarımı gönderiyorum kendisine.',
+        photo: 'skoda.jpg'
+      }
+    };
+
+    const timelineContainer = document.querySelector('.timeline-container');
+    const timelineEvents = document.querySelectorAll('.timeline-event');
+    const character = document.getElementById('character');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDescription = document.getElementById('modal-description');
+    const modalPhoto = document.getElementById('modal-photo');
+    const modalClose = document.querySelector('.modal-close');
+
+    timelineEvents.forEach(event => {
+      event.addEventListener('click', () => {
+        // Remove active state from all events
+        timelineEvents.forEach(e => e.classList.remove('active'));
+        event.classList.add('active');
+
+        // Calculate the event's position relative to the timeline container
+        const eventRect = event.getBoundingClientRect();
+        const containerRect = timelineContainer.getBoundingClientRect();
+        const leftPos =
+          eventRect.left - containerRect.left + eventRect.width / 2 - character.offsetWidth / 2;
+        // Use -45 as the vertical offset (sweet spot)
+        const topPos = eventRect.top - containerRect.top + eventRect.height - 45;
+
+        character.style.left = leftPos + 'px';
+        character.style.top = topPos + 'px';
+
+        // Show modal with event details and photo
+        const eventData = eventsData[event.dataset.event];
+        modalTitle.textContent = eventData.title;
+        modalDescription.textContent = eventData.description;
+        modalPhoto.style.backgroundImage = 'url(' + eventData.photo + ')';
+        modal.style.display = 'flex';
+      });
+    });
+
+    modalClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+
+    // Falling hearts animation
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.top = '0px';
+      heart.style.animationDuration = 5 + Math.random() * 5 + 's';
+      document.body.appendChild(heart);
+      heart.addEventListener('animationend', () => {
+        heart.remove();
+      });
+    }
+    setInterval(createHeart, 500);
+
+    // Position character initially a little left of the first event
+    window.addEventListener('load', () => {
+      const firstEvent = document.querySelector('.timeline-event');
+      if (firstEvent) {
+        const eventRect = firstEvent.getBoundingClientRect();
+        const containerRect = timelineContainer.getBoundingClientRect();
+        // Position the character 20px to the left of the center of the first event
+        const leftPos = eventRect.left - containerRect.left + eventRect.width / 2 - character.offsetWidth / 2 - 20;
+        const topPos = eventRect.top - containerRect.top + eventRect.height - 45;
+        character.style.left = leftPos + 'px';
+        character.style.top = topPos + 'px';
+      }
+    });
+
+    // COUNTER FUNCTIONALITY:
+    // Set the start date to November 3rd. (Adjust the year as needed.)
+    const startDate = new Date("2024-11-03T00:00:00");
+
+    function updateCounter() {
+      const now = new Date();
+      
+      // Calculate total difference in days
+      const diffMs = now - startDate;
+      const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      
+      // Calculate years, months, and days using date arithmetic
+      let years = now.getFullYear() - startDate.getFullYear();
+      let months = now.getMonth() - startDate.getMonth();
+      let days = now.getDate() - startDate.getDate();
+      
+      if (days < 0) {
+        months--;
+        // Get days in previous month:
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+      
+      // Convert leftover days into weeks and days
+      const weeks = Math.floor(days / 7);
+      const remainderDays = days % 7;
+      
+      document.getElementById("counter").textContent =
+        " 'Dan beri çok mutluyum: " +
+        years + " years, " +
+        months + " months, " +
+        weeks + " weeks, " +
+        remainderDays + " days.";
+    }
+    updateCounter();
+    setInterval(updateCounter, 1000);
+  </script>
+</body>
+</html>
